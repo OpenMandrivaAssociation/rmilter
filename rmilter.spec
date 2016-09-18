@@ -4,7 +4,7 @@
 
 Name:		rmilter
 Version:	1.9.2
-Release:	3
+Release:	4
 Summary:	Multi-purpose milter
 Group:		System/Servers
 
@@ -58,7 +58,7 @@ rm -rf %{buildroot} || true
 %{__install} -p -D -m 0644 %{SOURCE2} %{buildroot}%{_presetdir}/80-rmilter.preset
 %{__install} -p -D -d -m 0755 %{buildroot}%{_sysconfdir}/%{name}/rmilter.conf.d/
 
-sed -i -e 's,User=_rmilter,%{rmilter_user},g' %{buildroot}%{_unitdir}/%{name}.service
+sed -i -e 's,User=_rmilter,User=%{rmilter_user},g' %{buildroot}%{_unitdir}/%{name}.service
 
 %pre
 %{_sbindir}/groupadd -r %{rmilter_group} 2>/dev/null || :
