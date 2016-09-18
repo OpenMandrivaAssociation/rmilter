@@ -4,7 +4,7 @@
 
 Name:		rmilter
 Version:	1.9.2
-Release:	2
+Release:	3
 Summary:	Multi-purpose milter
 Group:		System/Servers
 
@@ -20,7 +20,7 @@ Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
 Requires(pre):  shadow
-Suggests:	clamav clamd rspamd
+Suggests:	clamav clamd rspamd redis
 
 Source0:	https://github.com/vstakhov/rmilter/archive/%{version}.tar.gz
 # Based on, but not identical to https://rspamd.com/rpm/SOURCES/%{name}.conf.common
