@@ -2,16 +2,16 @@
 %define rmilter_group     adm
 %define rmilter_home      %{_localstatedir}/run/rmilter
 
-Name:           rmilter
-Version:        1.9.2
-Release:        1
-Summary:        Multi-purpose milter
-Group:          System/Servers
+Name:		rmilter
+Version:	1.9.2
+Release:	2
+Summary:	Multi-purpose milter
+Group:		System/Servers
 
 # BSD License (two clause)
 # http://www.freebsd.org/copyright/freebsd-license.html
-License:        BSD-2-Clause
-URL:            https://github.com/vstakhov/rmilter
+License:	BSD-2-Clause
+URL:	    https://github.com/vstakhov/rmilter
 BuildRequires:  sendmail-devel,pkgconfig(libssl),pkgconfig(libpcre),pkgconfig(glib-2.0)
 BuildRequires:  cmake,bison,flex,pkgconfig(opendkim),pkgconfig(sqlite3)
 BuildRequires:  systemd
@@ -20,12 +20,12 @@ Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
 Requires(pre):  shadow
+Suggests:	clamav clamd rspamd
 
 Source0:	https://github.com/vstakhov/rmilter/archive/%{version}.tar.gz
-Source1:	https://rspamd.com/rpm/SOURCES/%{name}.conf
-Source2:	https://rspamd.com/rpm/SOURCES/%{name}.conf.common
-Source3:	https://rspamd.com/rpm/SOURCES/%{name}.conf.sysvinit
-Source5:	https://rspamd.com/rpm/SOURCES/80-rmilter.preset
+# Based on, but not identical to https://rspamd.com/rpm/SOURCES/%{name}.conf.common
+Source1:	%{name}.conf
+Source2:	https://rspamd.com/rpm/SOURCES/80-rmilter.preset
 
 %description
 The rmilter utility is designed to act as milter for sendmail and postfix MTA.
@@ -38,15 +38,15 @@ rm -rf %{buildroot} || true
 %build
 
 %{__cmake} \
-		-DCMAKE_C_OPT_FLAGS="%{optflags}" \
-        -DCMAKE_INSTALL_PREFIX=%{_prefix} \
-        -DCONFDIR=%{_sysconfdir}/rmilter \
-        -DMANDIR=%{_mandir} \
-        -DWANT_SYSTEMD_UNITS=ON \
-        -DSYSTEMDDIR=%{_unitdir} \
-        -DNO_SHARED=ON \
-        -DRMILTER_GROUP=%{rmilter_group} \
-        -DRMILTER_USER=%{rmilter_user}
+	-DCMAKE_C_OPT_FLAGS="%{optflags}" \
+	-DCMAKE_INSTALL_PREFIX=%{_prefix} \
+	-DCONFDIR=%{_sysconfdir}/rmilter \
+	-DMANDIR=%{_mandir} \
+	-DWANT_SYSTEMD_UNITS=ON \
+	-DSYSTEMDDIR=%{_unitdir} \
+	-DNO_SHARED=ON \
+	-DRMILTER_GROUP=%{rmilter_group} \
+	-DRMILTER_USER=%{rmilter_user}
 
 %make
 
@@ -55,11 +55,10 @@ rm -rf %{buildroot} || true
 
 %{__install} -p -d -D -m 0755 %{buildroot}%{_sysconfdir}/%{name}
 %{__install} -p -D -m 0644 %{SOURCE1} %{buildroot}%{_sysconfdir}/%{name}/
-%{__install} -p -D -m 0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/%{name}/
-%{__install} -p -D -m 0644 %{SOURCE3} %{buildroot}%{_sysconfdir}/%{name}/
-%{__install} -p -D -m 0644 %{SOURCE5} %{buildroot}%{_presetdir}/80-rmilter.preset
+%{__install} -p -D -m 0644 %{SOURCE2} %{buildroot}%{_presetdir}/80-rmilter.preset
 %{__install} -p -D -d -m 0755 %{buildroot}%{_sysconfdir}/%{name}/rmilter.conf.d/
 
+sed -i -e 's,User=_rmilter,%{rmilter_user},g' %{buildroot}%{_unitdir}/%{name}.service
 
 %pre
 %{_sbindir}/groupadd -r %{rmilter_group} 2>/dev/null || :
@@ -73,5 +72,3 @@ rm -rf %{buildroot} || true
 %dir %{_sysconfdir}/rmilter
 %dir %{_sysconfdir}/rmilter/rmilter.conf.d
 %config(noreplace) %{_sysconfdir}/rmilter/%{name}.conf
-%config(noreplace) %{_sysconfdir}/rmilter/%{name}.conf.common
-%config(noreplace) %{_sysconfdir}/rmilter/%{name}.conf.sysvinit
