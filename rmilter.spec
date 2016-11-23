@@ -3,8 +3,8 @@
 %define rmilter_home      %{_localstatedir}/run/rmilter
 
 Name:		rmilter
-Version:	1.9.2
-Release:	4
+Version:	1.10.0
+Release:	1
 Summary:	Multi-purpose milter
 Group:		System/Servers
 
