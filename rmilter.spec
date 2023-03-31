@@ -4,7 +4,7 @@
 
 Name:		rmilter
 Version:	1.10.0
-Release:	3
+Release:	4
 Summary:	Multi-purpose milter
 Group:		System/Servers
 
